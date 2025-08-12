@@ -10,9 +10,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://adnoenoselmzmebguidb.supabase.co',
+    url: 'https://szvputxwnsmkuukkzhlk.supabase.co',
     anonKey:
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkbm9lbm9zZWxtem1lYmd1aWRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3NTc0ODksImV4cCI6MjA3MDMzMzQ4OX0.od9JcjkrPN3tIkcuPt8KR8B2zc_RvouT7z_yn_aSZYo',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN6dnB1dHh3bnNta3V1a2t6aGxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ5MjM3MTUsImV4cCI6MjA3MDQ5OTcxNX0.1eQIk_a5YL4oyZxtxlsaB5TVzeijL9Hgr7hOo4p2QJ0',
   );
 
   supabase = Supabase.instance.client;
@@ -39,7 +39,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(title: const Text('Welcome')),
       body: Center(
         child: Column(
@@ -50,7 +49,7 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  MenuScreen()),
+                  MaterialPageRoute(builder: (context) => MenuScreen()),
                 );
               },
             ),

@@ -10,9 +10,9 @@ class AdminReviewPage extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> fetchReviews(int menuItemId) async {
     final response = await Supabase.instance.client
-        .from('Review')
-        .select()
-        .eq('meal_id', menuItemId);
+        .from('reviews')
+        .select('*, users(user_name)')
+        .eq('menu_item_id', menuItemId);
 
     return List<Map<String, dynamic>>.from(response);
   }
@@ -21,11 +21,12 @@ class AdminReviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${menuItem.name} Review"),
+        title: Text("${menuItem.mealName} Review"),
         backgroundColor: Colors.deepPurple,
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: fetchReviews(int.parse(menuItem.id.toString())),        builder: (context, snapshot) {
+        future: fetchReviews(menuItem.menuItemId),
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -35,7 +36,9 @@ class AdminReviewPage extends StatelessWidget {
           final reviews = snapshot.data ?? [];
 
           // // Sort reviews by lowest rating first
-          reviews.sort((a, b) => (a['rating'] as num).compareTo(b['rating'] as num));
+          reviews.sort(
+                (a, b) => (a['rating'] as num).compareTo(b['rating'] as num),
+          );
 
           // Calculate average rating
           final double avgRating = reviews.isNotEmpty
@@ -64,8 +67,11 @@ class AdminReviewPage extends StatelessWidget {
 
                 // Name
                 Text(
-                  menuItem.name,
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  menuItem.mealName,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 8),
 
@@ -73,7 +79,10 @@ class AdminReviewPage extends StatelessWidget {
                 Text(
                   "\$${menuItem.price.toStringAsFixed(2)}",
                   style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
                 ),
                 const SizedBox(height: 8),
 
@@ -89,7 +98,10 @@ class AdminReviewPage extends StatelessWidget {
                   children: [
                     const Text(
                       "Average Rating:",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     RatingBarIndicator(
@@ -130,7 +142,7 @@ class AdminReviewPage extends StatelessWidget {
                         const Icon(Icons.star, color: Colors.amber),
                         itemSize: 20,
                       ),
-                      title: Text(review['user_name'] ?? 'Anonymous'),
+                      title: Text(review['users']?['user_name'] ?? 'Anonymous'),
                       subtitle: Text(review['comment'] ?? ''),
                     );
                   },

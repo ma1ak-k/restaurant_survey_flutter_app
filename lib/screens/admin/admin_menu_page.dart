@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // For rootBundle
-import 'dart:convert'; // For jsonDecode
 import 'package:restaurant_survey_app/models/menu_item.dart';
+import 'package:restaurant_survey_app/services/database_service.dart';
 import 'package:restaurant_survey_app/screens/admin/admin_review_page.dart';
 
 class AdminMenuPage extends StatefulWidget {
@@ -22,29 +21,19 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
 
   Future<void> _loadMenuItems() async {
     try {
-      final String jsonString = await rootBundle.loadString('assets/menu.json');
-
-      final Map<String, dynamic> data = jsonDecode(jsonString);
-      final List<dynamic> jsonList = data['record']['menu'];
-
-      final items = jsonList
-          .map((item) => MenuItem.fromJson(item as Map<String, dynamic>))
-          .toList();
-
-      // // sort lowest -> highest rating
-      // items.sort((a, b) => a.averageRating.compareTo(b.averageRating));
+      final items = await DatabaseService.getAllMenuItems();
 
       setState(() {
         _menuItems = items;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to load menu items: $e")),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to load menu items: $e")),
+        );
+      }
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +46,7 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
         itemBuilder: (context, index) {
           final item = _menuItems[index];
           return ListTile(
-            title: Text(item.name),
+            title: Text(item.mealName),
             subtitle: Text('Price: ${item.price} EGP'),
             trailing: const Icon(Icons.arrow_forward),
             onTap: () {

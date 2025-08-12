@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_survey_app/models/menu_item.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:restaurant_survey_app/services/database_service.dart';
 
 class MenuItemReviewPage extends StatefulWidget {
   const MenuItemReviewPage({super.key});
@@ -15,14 +15,14 @@ class _MenuItemReviewPageState extends State<MenuItemReviewPage> {
   double _rating = 0;
   final TextEditingController _reviewController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
 
   Future<void> _submitReview() async {
     if (_nameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _rating == 0 ) {
+        _phoneController.text.isEmpty ||
+        _rating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill in all fields and rate")),
+        const SnackBar(content: Text("Please fill in name, phone and rating")),
       );
       return;
     }
@@ -30,28 +30,37 @@ class _MenuItemReviewPageState extends State<MenuItemReviewPage> {
     final menuItem = Get.arguments as MenuItem;
 
     try {
-      await Supabase.instance.client.from('Review').insert({
-        'meal_id': menuItem.id,
-        'user_name': _nameController.text,
-        'user_email': _emailController.text,
-        'rating': _rating,
-        'comment': _reviewController.text,
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Review submitted successfully!")),
+      // Submit single review using database service
+      await DatabaseService.submitMultipleReviews(
+        userName: _nameController.text.trim(),
+        phone: _phoneController.text.trim(),
+        reviews: [
+          ReviewData(
+            menuItemId: menuItem.menuItemId,
+            rating: _rating,
+            comment: _reviewController.text.trim(),
+          ),
+        ],
       );
 
-      _nameController.clear();
-      _emailController.clear();
-      _reviewController.clear();
-      setState(() {
-        _rating = 0;
-      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Review submitted successfully!")),
+        );
+
+        // Navigate to home page after successful submission
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/', // Home route
+              (route) => false, // Remove all previous routes
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
     }
   }
 
@@ -61,7 +70,7 @@ class _MenuItemReviewPageState extends State<MenuItemReviewPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(menuItem.name),
+        title: Text(menuItem.mealName),
         backgroundColor: Colors.deepPurple,
       ),
       body: SingleChildScrollView(
@@ -83,9 +92,8 @@ class _MenuItemReviewPageState extends State<MenuItemReviewPage> {
 
             // Name, description, price
             Text(
-              menuItem.name,
-              style: const TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.bold),
+              menuItem.mealName,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
@@ -96,9 +104,10 @@ class _MenuItemReviewPageState extends State<MenuItemReviewPage> {
             Text(
               "\$${menuItem.price.toStringAsFixed(2)}",
               style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
+              ),
             ),
 
             const SizedBox(height: 20),
@@ -145,16 +154,16 @@ class _MenuItemReviewPageState extends State<MenuItemReviewPage> {
             ),
             const SizedBox(height: 16),
 
-            // Email field
+            // Phone field
             TextField(
-              controller: _emailController,
+              controller: _phoneController,
               decoration: InputDecoration(
-                labelText: "Your email",
+                labelText: "Your phone",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              keyboardType: TextInputType.emailAddress,
+              keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 24),
 
