@@ -1,0 +1,126 @@
+{
+  "record": {
+    "menu": [
+      {
+        "id": 1,
+        "name": "Koshari",
+        "description": "Egypt's national dish made of rice, lentils, pasta, and chickpeas topped with spicy tomato sauce and crispy onions.",
+        "price": 25,
+        "category": "Main Course",
+        "image": "https://i.ibb.co/1fmhtj0G/koshari-egyptian-rice-lentils-and-pasta-180337-2.jpg"
+      },
+      {
+        "id": 2,
+        "name": "Ful Medames",
+        "description": "Slow-cooked fava beans seasoned with garlic, lemon, and olive oil, served with bread.",
+        "price": 15,
+        "category": "Main Course",
+        "image": "https://i.ibb.co/Y48HCj6L/download-2.jpg"
+      },
+      {
+        "id": 3,
+        "name": "Molokhia",
+        "description": "Jute leaf soup with garlic and coriander, served with rice or bread.",
+        "price": 30,
+        "category": "Main Course",
+        "image": "https://i.ibb.co/SXpzVq0P/download-1.jpg"
+      },
+      {
+        "id": 4,
+        "name": "Hawawshi",
+        "description": "Spiced minced meat stuffed in baladi bread, baked until crispy.",
+        "price": 35,
+        "category": "Main Course",
+        "image": "https://i.ibb.co/FFvNjTb/download-3.jpg"
+      },
+      {
+        "id": 5,
+        "name": "Mahshi",
+        "description": "Vegetables stuffed with spiced rice, cooked in tomato sauce.",
+        "price": 40,
+        "category": "Main Course",
+        "image": "https://i.ibb.co/69DdypJ/download-7.jpg"
+      },
+      {
+        "id": 6,
+        "name": "Fatta",
+        "description": "Layered rice, bread, garlic meat broth, and lamb chunks.",
+        "price": 50,
+        "category": "Main Course",
+        "image": "https://i.ibb.co/hRXbzNW3/download-4.jpg"
+      },
+      {
+        "id": 7,
+        "name": "Taameya (Falafel)",
+        "description": "Fava bean patties with herbs, deep-fried, served with tahini.",
+        "price": 20,
+        "category": "Main Course",
+        "image": "https://i.ibb.co/7dH0wGzZ/elaosboa14860.jpg"
+      },
+      {
+        "id": 8,
+        "name": "Shawerma",
+        "description": "Marinated beef/chicken grilled on a spit, served in bread with garlic sauce.",
+        "price": 45,
+        "category": "Main Course",
+        "image": "https://i.ibb.co/jkCsH78k/download-5.jpg"
+      },
+      {
+        "id": 9,
+        "name": "Kofta",
+        "description": "Spiced ground meat skewers, grilled and served with bread or rice.",
+        "price": 40,
+        "category": "Main Course",
+        "image": "https://i.ibb.co/TBMgCn05/download.jpg"
+      },
+      {
+        "id": 10,
+        "name": "Feseekh",
+        "description": "Fermented mullet fish, traditionally eaten during Sham El-Nessim festival.",
+        "price": 60,
+        "category": "Main Course",
+        "image": "https://i.ibb.co/LhzgGcZg/download-6.jpg"
+      },
+      {
+        "id": 11,
+        "name": "Umm Ali",
+        "description": "Egyptian bread pudding with milk, nuts, raisins, and coconut, baked to golden perfection.",
+        "price": 25,
+        "category": "Dessert",
+        "image": "https://i.ibb.co/yFrkKV30/download-8.jpg"
+      },
+      {
+        "id": 12,
+        "name": "Basbousa",
+        "description": "Semolina cake soaked in sweet syrup, often topped with almonds or coconut.",
+        "price": 20,
+        "category": "Dessert",
+        "image": "https://i.ibb.co/zYC6H8d/Basbousa-2.jpg"
+      },
+      {
+        "id": 13,
+        "name": "Konafa",
+        "description": "Shredded phyllo pastry filled with cream or cheese, baked and drenched in syrup.",
+        "price": 30,
+        "category": "Dessert",
+        "image": "https://i.ibb.co/GQmv3DRP/40ea196d5067443d80f58eaee245b976.jpg"
+      },
+      {
+        "id": 14,
+        "name": "Qatayef",
+        "description": "Mini pancakes stuffed with nuts or cream, fried or baked, then dipped in syrup.",
+        "price": 28,
+        "category": "Dessert",
+        "image": "https://i.ibb.co/3m4tZV6d/Atayef12726.jpg"
+      },
+      {
+        "id": 15,
+        "name": "Mahalabia",
+        "description": "Milk pudding flavored with rose water or orange blossom, topped with pistachios.",
+        "price": 18,
+        "category": "Dessert",
+        "image": "https://i.ibb.co/WvMv4h35/Mahalabia-Milk-Pudding-1200.jpg"
+      }
+    ]
+  }
+}
