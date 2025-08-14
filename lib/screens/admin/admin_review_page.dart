@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
+import 'package:restaurant_survey_app/widgets/language_switcher.dart';
 import '../../models/menu_item.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -21,7 +23,8 @@ class AdminReviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${menuItem.mealName} Review"),
+        title: Text(menuItem.getLocalizedName().tr),
+        actions: [LanguageSwitcher()],
         backgroundColor: Colors.deepPurple,
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
@@ -31,7 +34,7 @@ class AdminReviewPage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('${'error'.tr}: ${snapshot.error}'));
           }
           final reviews = snapshot.data ?? [];
 
@@ -67,37 +70,27 @@ class AdminReviewPage extends StatelessWidget {
 
                 // Name
                 Text(
-                  menuItem.mealName,
+                  menuItem.getLocalizedName(),
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                 SizedBox(height: 8),
 
-                // Price
-                Text(
-                  "\$${menuItem.price.toStringAsFixed(2)}",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                ),
-                const SizedBox(height: 8),
 
                 // Description
                 Text(
-                  menuItem.description,
+                  menuItem.getLocalizedDescription(),
                   style: const TextStyle(fontSize: 16, color: Colors.black87),
                 ),
-                const SizedBox(height: 20),
+                 SizedBox(height: 20),
 
                 // Average Rating
                 Row(
                   children: [
-                    const Text(
-                      "Average Rating:",
+                    Text(
+                      'average_rating_colon'.tr,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -121,8 +114,8 @@ class AdminReviewPage extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 // User Reviews
-                const Text(
-                  "User Suggestions (Lowest rating first):",
+                Text(
+                  'user_suggestions_lowest'.tr,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
@@ -142,8 +135,9 @@ class AdminReviewPage extends StatelessWidget {
                         const Icon(Icons.star, color: Colors.amber),
                         itemSize: 20,
                       ),
-                      title: Text(review['users']?['user_name'] ?? 'Anonymous'),
-                      subtitle: Text(review['comment'] ?? ''),
+                      title: Text(
+                        review['users']?['user_name'] ?? 'anonymous'.tr,
+                      ),                      subtitle: Text(review['comment'] ?? ''),
                     );
                   },
                 ),

@@ -1,3 +1,8 @@
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+
+import '../services/meal_translation_service.dart';
+
 class MenuItem {
   final int menuItemId;
   final String mealName;
@@ -5,6 +10,7 @@ class MenuItem {
   final double price;
   final String imageUrl;
   final String category;
+  double averageRating = 0.0; // Default value
 
   MenuItem({
     required this.menuItemId,
@@ -13,6 +19,7 @@ class MenuItem {
     required this.price,
     required this.imageUrl,
     required this.category,
+    required this.averageRating,
   });
 
   factory MenuItem.fromJson(Map<String, dynamic> json) {
@@ -23,6 +30,22 @@ class MenuItem {
       price: (json['price'] as num).toDouble(),
       imageUrl: json['image_url'] as String,
       category: json['category'] as String,
+      averageRating: (json['average_rating'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+
+  String getLocalizedName() {
+    return MealTranslationService.getMealName(
+      mealName,
+      Get.locale?.languageCode ?? 'en',
+    );
+  }
+
+  String getLocalizedDescription() {
+    return MealTranslationService.getMealDescription(
+      mealName,
+      description,
+      Get.locale?.languageCode ?? 'en',
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:get/get.dart';
 import '../../models/menu_item.dart';
 import '../../services/database_service.dart';
 import 'multi_review_page.dart';
@@ -14,7 +15,8 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   List<MenuItem> _allMenuItems = [];
   late List<MenuItem> _displayedItems;
-  List<MenuItem> _selectedItems = []; // Track selected items for multi-review
+  final List<MenuItem> _selectedItems =
+  []; // Track selected items for multi-review
   bool _isLoading = true;
   String? _error;
   bool _isGridView = false;
@@ -66,6 +68,18 @@ class _MenuScreenState extends State<MenuScreen> {
     });
   }
 
+  // Helper method to translate category names
+  String _translateCategory(String category) {
+    switch (category) {
+      case 'Main Course':
+        return 'main_course'.tr;
+      case 'Dessert':
+        return 'dessert'.tr;
+      default:
+        return category;
+    }
+  }
+
   Widget _buildCategoryButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -88,7 +102,7 @@ class _MenuScreenState extends State<MenuScreen> {
             ? Colors.white
             : Colors.black,
       ),
-      child: Text(category),
+      child: Text(_translateCategory(category)),
     );
   }
 
@@ -105,11 +119,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
   void _goToMultiReview() {
     if (_selectedItems.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select at least one item to review'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('no_items_selected'.tr)));
       return;
     }
 
@@ -174,7 +186,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.mealName,
+                      item.getLocalizedName(),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -182,7 +194,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'EGP ${item.price.toStringAsFixed(2)}',
+                      'egp ${item.price.toStringAsFixed(2)}'.tr,
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold,
@@ -190,7 +202,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      item.description,
+                      item.getLocalizedDescription(),
                       style: const TextStyle(fontSize: 13, color: Colors.grey),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -284,7 +296,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          item.mealName,
+                          item.getLocalizedName(),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -294,7 +306,7 @@ class _MenuScreenState extends State<MenuScreen> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          item.description,
+                          item.getLocalizedDescription(),
                           style: const TextStyle(
                             fontSize: 12,
                             color: Colors.grey,
@@ -316,7 +328,7 @@ class _MenuScreenState extends State<MenuScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'EGP ${item.price.toStringAsFixed(0)}',
+                        'egp ${item.price.toStringAsFixed(0)}'.tr,
                         style: TextStyle(
                           color: Theme.of(context).primaryColor,
                           fontSize: 16,
@@ -342,7 +354,7 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Restaurant Menu'),
+        title: Text('restaurant_menu'.tr),
         actions: [
           // Cart icon with badge
           IconButton(
@@ -370,12 +382,12 @@ class _MenuScreenState extends State<MenuScreen> {
               ],
             ),
             onPressed: _goToMultiReview,
-            tooltip: 'Review selected items (${_selectedItems.length})',
+            tooltip: '${'review_selected_items'.tr} (${_selectedItems.length})',
           ),
           IconButton(
             icon: Icon(_isGridView ? Icons.list : Icons.grid_view),
             onPressed: () => setState(() => _isGridView = !_isGridView),
-            tooltip: _isGridView ? 'List view' : 'Grid view',
+            tooltip: _isGridView ? 'list_view'.tr : 'grid_view'.tr,
           ),
         ],
       ),
@@ -394,7 +406,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 : _error != null
                 ? Center(child: Text(_error!))
                 : _displayedItems.isEmpty
-                ? const Center(child: Text('No items in this category'))
+                ? Center(child: Text('No items in this category'.tr))
                 : _isGridView
                 ? GridView.builder(
               padding: const EdgeInsets.all(8),
@@ -423,7 +435,9 @@ class _MenuScreenState extends State<MenuScreen> {
           ? FloatingActionButton.extended(
         onPressed: _goToMultiReview,
         icon: Icon(Icons.rate_review),
-        label: Text('Review ${_selectedItems.length} items'),
+        label: Text(
+          '${'review_selected_items'.tr} (${_selectedItems.length})',
+        ),
         backgroundColor: Colors.deepPurple,
       )
           : null,

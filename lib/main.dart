@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:restaurant_survey_app/screens/user/menu_page.dart';
-import 'package:restaurant_survey_app/screens/admin/admin_login_page.dart';
+import 'package:get/get.dart';
+import 'package:restaurant_survey_app/screens/translations/messages.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:restaurant_survey_app/screens/start_page.dart';
+import 'package:restaurant_survey_app/services/language_service.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 late final SupabaseClient supabase;
 
@@ -16,58 +19,96 @@ void main() async {
   );
 
   supabase = Supabase.instance.client;
-  runApp(const MyApp());
+  Get.put(LanguageService());
+
+  final prefs = await SharedPreferences.getInstance();
+  final isDarkMode = prefs.getBool('isDarkMode') ?? false;
+
+  runApp(MyApp(isDarkMode: isDarkMode));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  final bool isDarkMode;
+  const MyApp({super.key, required this.isDarkMode});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _isDarkMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isDarkMode = widget.isDarkMode;
+  }
+
+  void _toggleTheme(bool isDark) async {
+    setState(() {
+      _isDarkMode = isDark;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', isDark);
+  }
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Restaurant Survey App',
-      theme: ThemeData(primarySwatch: Colors.orange),
-      home: const HomePage(),
-    );
-  }
-}
+      theme: _isDarkMode ? _darkTheme : _lightTheme,
+      translations: Messages(),
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+      // Default to English
+      locale: const Locale('en'),
+      fallbackLocale: const Locale('en'),
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Welcome')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              child: const Text('User'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MenuScreen()),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              child: const Text('Admin'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AdminLoginPage(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+      supportedLocales: const [Locale('en'), Locale('ar')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+
+      // Switch direction based on current locale (LTR for en, RTL for ar)
+      builder: (context, child) {
+        return Directionality(
+          textDirection: Get.locale?.languageCode == 'ar'
+              ? TextDirection.rtl
+              : TextDirection.ltr,
+          child: child!,
+        );
+      },
+
+
+      home: StartPage(
+        toggleTheme: _toggleTheme,
+        isDarkMode: _isDarkMode,
       ),
     );
   }
+
+  final ThemeData _lightTheme = ThemeData(
+    primarySwatch: Colors.deepPurple,
+    brightness: Brightness.light,
+    scaffoldBackgroundColor: Colors.white,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.deepPurple,
+      foregroundColor: Colors.white,
+    ),
+  );
+
+  final ThemeData _darkTheme = ThemeData(
+    primarySwatch: Colors.deepPurple,
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: Colors.grey[900],
+    appBarTheme: AppBarTheme(
+      backgroundColor: Colors.grey[800],
+      foregroundColor: Colors.white,
+    ),
+    // cardTheme: CardTheme(
+    //   color: Colors.grey[800],
+    // ),
+  );
 }
