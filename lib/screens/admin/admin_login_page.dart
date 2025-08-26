@@ -30,7 +30,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     }
   }
 
-  // palette (same family as other pages)
+  // palette
   static const _cream = Color(0xFFFFF7ED);
   static const _terracotta = Color(0xFFCC6B49);
   static const _ink = Color(0xFF232222);
@@ -96,7 +96,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
       body: Stack(
         children: [
-          // background gradient + subtle glows
+          // background gradient
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(

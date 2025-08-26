@@ -18,7 +18,7 @@ class AdminReviewPage extends StatelessWidget {
     return List<Map<String, dynamic>>.from(response);
   }
 
-  // palette used across the app
+  // palette
   static const _cream = Color(0xFFFFF7ED);
   static const _terracotta = Color(0xFFCC6B49);
   static const _ink = Color(0xFF232222);
@@ -55,7 +55,6 @@ class AdminReviewPage extends StatelessWidget {
 
       body: Stack(
         children: [
-          // warm / dark background with subtle glows (same vibe as other screens)
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -95,10 +94,10 @@ class AdminReviewPage extends StatelessWidget {
 
               final reviews = snapshot.data ?? [];
 
-              // Sort reviews by lowest rating first (UNCHANGED)
+              // Sort reviews
               reviews.sort((a, b) => (a['rating'] as num).compareTo(b['rating'] as num));
 
-              // Average rating (UNCHANGED)
+              // Average rating
               final double avgRating = reviews.isNotEmpty
                   ? reviews
                   .map((r) => (r['rating'] as num).toDouble())
@@ -198,7 +197,7 @@ class AdminReviewPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
 
-                    // Reviews list (same data/logic; styled as cards)
+                    // Reviews list
                     ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -256,7 +255,7 @@ class AdminReviewPage extends StatelessWidget {
     );
   }
 
-  // soft background glow helper
+  // helper
   static Widget _blurCircle(Color color, double size) => Container(
     width: size,
     height: size,

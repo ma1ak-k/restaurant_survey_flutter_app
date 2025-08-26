@@ -107,8 +107,6 @@ class _MyAppState extends State<MyApp> {
       backgroundColor: Colors.grey[800],
       foregroundColor: Colors.white,
     ),
-    // cardTheme: CardTheme(
-    //   color: Colors.grey[800],
-    // ),
+
   );
 }

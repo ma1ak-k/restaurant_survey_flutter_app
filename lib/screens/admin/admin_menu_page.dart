@@ -19,7 +19,7 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
   final SupabaseClient _supabase = Supabase.instance.client;
   bool _isLoading = true;
 
-  // palette (same family used across the app)
+  // palette
   static const _cream = Color(0xFFFFF7ED);
   static const _terracotta = Color(0xFFCC6B49);
   static const _ink = Color(0xFF232222);
@@ -129,7 +129,7 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
               ? const Center(child: CircularProgressIndicator())
               : Column(
             children: [
-              // Sort controls (unchanged logic; styled)
+              // Sort controls
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Container(
@@ -180,7 +180,7 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
                 ),
               ),
 
-              // Menu items list (logic unchanged)
+              // Menu items list
               Expanded(
                 child: ListView.builder(
                   itemCount: _menuItems.length,
@@ -243,7 +243,7 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
     );
   }
 
-  // tiny helper for background glows
+  // helpers for background glows
   static Widget _blurCircle(Color color, double size) => Container(
     width: size,
     height: size,

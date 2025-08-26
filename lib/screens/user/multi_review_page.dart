@@ -8,7 +8,7 @@ import 'dart:convert';
 import '../../models/menu_item.dart';
 import '../../services/database_service.dart';
 
-// ------------------ helpers (unchanged) ------------------
+//helpers
 String _normalizeText(String input) {
   final lower = input.toLowerCase();
   final noPunct = lower.replaceAll(RegExp(r'[^\p{L}\p{N}\s]', unicode: true), '');
@@ -36,7 +36,7 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
   List<String> _badWords = [];
   List<String> _goodWords = [];
 
-  // palette (same family as other pages)
+  // palette
   static const _cream = Color(0xFFFFF7ED);
   static const _terracotta = Color(0xFFCC6B49);
   static const _plum = Color(0xFF5B3A3A);
@@ -159,7 +159,6 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
     }
   }
 
-  // ------------------ UI: item card (restyled only) ------------------
   Widget _buildItemReviewCard(MenuItem item) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -282,13 +281,12 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
     );
   }
 
-  // ------------------ build ------------------
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      // Gradient AppBar (language switch kept)
+      // Gradient AppBar
       appBar: AppBar(
         title: Text(
           'review_selected_dishes'.tr,
@@ -338,7 +336,7 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
             child: _blurCircle(isDark ? const Color(0x334CAF50) : const Color(0x337A8F55), 190),
           ),
 
-          // content (unchanged structure)
+          // main content
           SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -428,7 +426,6 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
     );
   }
 
-  // ---- small UI helpers (style only) ----
   InputDecoration _inputDecoration(BuildContext context,
       {required String label, required bool isDark}) {
     return InputDecoration(
@@ -454,6 +451,7 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
     );
   }
 
+  // helpers
   static Widget _blurCircle(Color color, double size) => Container(
     width: size,
     height: size,

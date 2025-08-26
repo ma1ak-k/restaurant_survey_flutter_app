@@ -21,7 +21,7 @@ class _MenuScreenState extends State<MenuScreen> {
   bool _isGridView = false;
   String _selectedCategory = 'Main Course';
 
-  // --- Palette to match StartPage (light & dark friendly) ---
+  // palette
   static const _cream = Color(0xFFFFF7ED);
   static const _terracotta = Color(0xFFCC6B49);
   static const _plum = Color(0xFF5B3A3A);
@@ -145,7 +145,6 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  // --------- Item Card (List & Grid) — UI restyle only ----------
   Widget _buildMenuItemCard(MenuItem item) {
     final isSelected = _selectedItems.contains(item);
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -376,7 +375,7 @@ class _MenuScreenState extends State<MenuScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      // Gradient AppBar to match StartPage
+      // Gradient AppBar
       appBar: AppBar(
         title: Text('restaurant_menu'.tr,
             style: TextStyle(
@@ -384,7 +383,7 @@ class _MenuScreenState extends State<MenuScreen> {
               fontWeight: FontWeight.w700,
             )),
         actions: [
-          // Cart icon with badge (unchanged logic)
+          // Cart icon with badge
           IconButton(
             icon: Stack(
               clipBehavior: Clip.none,
@@ -441,7 +440,7 @@ class _MenuScreenState extends State<MenuScreen> {
         iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black87),
       ),
 
-      // Themed background + subtle glows
+      // Themed background
       body: Stack(
         children: [
           Container(
@@ -534,7 +533,7 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  // ---- helpers ----
+  // helpers
   static Widget _blurCircle(Color color, double size) => Container(
     width: size,
     height: size,

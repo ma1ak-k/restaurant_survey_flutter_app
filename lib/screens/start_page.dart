@@ -184,7 +184,7 @@ class StartPage extends StatelessWidget {
 
                     const SizedBox(height: 22),
 
-                    // Language toggle (same widget; themed container)
+                    // Language toggle
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
@@ -205,7 +205,7 @@ class StartPage extends StatelessWidget {
     );
   }
 
-  // --- helpers (unchanged logic) ---
+  // helpers
   static Widget _blurCircle(Color color, double size) => Container(
     width: size,
     height: size,
