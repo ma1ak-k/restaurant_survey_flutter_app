@@ -78,15 +78,17 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   Widget _buildCategoryButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 12,
+      runSpacing: 8,
       children: [
         _buildCategoryButton('Main Course'),
-        const SizedBox(width: 12),
         _buildCategoryButton('Dessert'),
       ],
     );
   }
+
 
   Widget _buildCategoryButton(String category) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -493,25 +495,21 @@ class _MenuScreenState extends State<MenuScreen> {
                 )
                     : _isGridView
                     ? GridView.builder(
-                  padding: const EdgeInsets.all(8),
-                  gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 88),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.85,
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
                   ),
                   itemCount: _displayedItems.length,
-                  itemBuilder: (context, index) =>
-                      _buildMenuItemCard(
-                          _displayedItems[index]),
+                  itemBuilder: (context, index) => _buildMenuItemCard(_displayedItems[index]),
                 )
+
                     : ListView.builder(
-                  padding: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 88),
                   itemCount: _displayedItems.length,
-                  itemBuilder: (context, index) =>
-                      _buildMenuItemCard(
-                          _displayedItems[index]),
+                  itemBuilder: (context, index) => _buildMenuItemCard(_displayedItems[index]),
                 ),
               ),
             ],
