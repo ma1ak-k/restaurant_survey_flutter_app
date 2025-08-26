@@ -145,6 +145,7 @@ class AdminReviewPage extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     // Average rating container
+                    // Average rating container
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       decoration: BoxDecoration(
@@ -154,36 +155,50 @@ class AdminReviewPage extends StatelessWidget {
                           color: isDark ? const Color(0x26FFFFFF) : const Color(0x14000000),
                         ),
                       ),
-                      child: Row(
-                        children: [
-                          Text(
-                            'average_rating_colon'.tr,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                              color: isDark ? Colors.white : _ink,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          RatingBarIndicator(
-                            rating: avgRating,
-                            itemBuilder: (context, index) =>
-                            const Icon(Icons.star, color: Colors.amber),
-                            itemCount: 5,
-                            itemSize: 22,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            avgRating.toStringAsFixed(1),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: isDark ? Colors.white : _ink,
-                            ),
-                          ),
-                        ],
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Slightly smaller stars on extra-narrow screens
+                          final starSize = constraints.maxWidth < 360 ? 18.0 : 22.0;
+
+                          return Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 10,
+                            runSpacing: 8,
+                            children: [
+                              // Constrain
+                              ConstrainedBox(
+                                constraints: BoxConstraints(maxWidth: constraints.maxWidth - (starSize * 5) - 50),
+                                child: Text(
+                                  'average_rating_colon'.tr,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w800,
+                                    color: isDark ? Colors.white : _ink,
+                                  ),
+                                ),
+                              ),
+                              RatingBarIndicator(
+                                rating: avgRating,
+                                itemBuilder: (context, index) =>
+                                const Icon(Icons.star, color: Colors.amber),
+                                itemCount: 5,
+                                itemSize: starSize,
+                              ),
+                              Text(
+                                avgRating.toStringAsFixed(1),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark ? Colors.white : _ink,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ),
+
                     const SizedBox(height: 20),
 
                     // Section title

@@ -69,6 +69,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
           'admin_login'.tr,
@@ -119,9 +120,14 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
             child: _blurCircle(isDark ? const Color(0x334CAF50) : const Color(0x337A8F55), 190),
           ),
 
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
+          Align(
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.fromLTRB(
+                20, 40, 20,
+                20 + MediaQuery.of(context).viewInsets.bottom, // extra padding for keyboard
+              ),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 520),
                 child: Card(
@@ -136,7 +142,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         // little badge/icon
@@ -196,9 +201,13 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                               ),
                               elevation: 0,
                             ),
-                            child: Text('login'.tr,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, letterSpacing: .2)),
+                            child: Text(
+                              'login'.tr,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: .2,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -207,7 +216,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                 ),
               ),
             ),
-          ),
+          )
+          ,
         ],
       ),
     );
