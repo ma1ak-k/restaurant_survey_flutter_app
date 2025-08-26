@@ -89,16 +89,14 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-
   Widget _buildCategoryButton(String category) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final selected = _selectedCategory == category;
     final bg = selected
         ? _terracotta
         : (isDark ? const Color(0xFF2A2524) : Colors.white);
-    final fg = selected
-        ? Colors.white
-        : (isDark ? Colors.white70 : Colors.black87);
+    final fg =
+    selected ? Colors.white : (isDark ? Colors.white70 : Colors.black87);
     final border = selected
         ? Colors.transparent
         : (isDark ? const Color(0x26FFFFFF) : const Color(0x14000000));
@@ -298,7 +296,8 @@ class _MenuScreenState extends State<MenuScreen> {
                         isDark ? const Color(0xFF7ED957) : Colors.green,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.check, color: Colors.white, size: 16),
+                      child: const Icon(Icons.check,
+                          color: Colors.white, size: 16),
                     ),
                   ),
               ],
@@ -338,13 +337,11 @@ class _MenuScreenState extends State<MenuScreen> {
                     ),
                     const SizedBox(height: 8),
                     Container(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: (isDark
-                            ? Colors.white
-                            : _terracotta)
-                            .withOpacity(0.08),
+                        color:
+                        (isDark ? Colors.white : _terracotta).withOpacity(0.08),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: isDark
@@ -355,8 +352,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       child: Text(
                         '${'egp'.tr} ${item.price.toStringAsFixed(2)}',
                         style: TextStyle(
-                          color:
-                          isDark ? const Color(0xFF8BE28E) : Colors.green,
+                          color: isDark ? const Color(0xFF8BE28E) : Colors.green,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -481,10 +477,12 @@ class _MenuScreenState extends State<MenuScreen> {
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : _error != null
-                    ? Center(child: Text(_error!,
-                    style: TextStyle(
-                        color:
-                        isDark ? Colors.white70 : Colors.black87)))
+                    ? Center(
+                    child: Text(_error!,
+                        style: TextStyle(
+                            color: isDark
+                                ? Colors.white70
+                                : Colors.black87)))
                     : _displayedItems.isEmpty
                     ? Center(
                   child: Text('No items in this category'.tr,
@@ -495,21 +493,28 @@ class _MenuScreenState extends State<MenuScreen> {
                 )
                     : _isGridView
                     ? GridView.builder(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 88),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  padding:
+                  const EdgeInsets.fromLTRB(8, 8, 8, 88),
+                  gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.85,
+                    childAspectRatio:
+                    _gridAspectRatio(context), // responsive fix
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
                   ),
                   itemCount: _displayedItems.length,
-                  itemBuilder: (context, index) => _buildMenuItemCard(_displayedItems[index]),
+                  itemBuilder: (context, index) =>
+                      _buildMenuItemCard(
+                          _displayedItems[index]),
                 )
-
                     : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 88),
+                  padding:
+                  const EdgeInsets.fromLTRB(12, 8, 12, 88),
                   itemCount: _displayedItems.length,
-                  itemBuilder: (context, index) => _buildMenuItemCard(_displayedItems[index]),
+                  itemBuilder: (context, index) =>
+                      _buildMenuItemCard(
+                          _displayedItems[index]),
                 ),
               ),
             ],
@@ -524,11 +529,27 @@ class _MenuScreenState extends State<MenuScreen> {
         label: Text(
           '${'review_selected_items'.tr} (${_selectedItems.length})',
         ),
-        backgroundColor: _terracotta, // themed
+        backgroundColor: _terracotta,
         foregroundColor: Colors.white,
       )
           : null,
     );
+  }
+
+  //fixing ratio for tiles
+  double _gridAspectRatio(BuildContext context) {
+    final screenW = MediaQuery.of(context).size.width;
+    const columns = 2;
+    const outerPadding = 16.0;
+    const spacing = 12.0;
+
+    final tileW = (screenW - outerPadding - (columns - 1) * spacing) / columns;
+
+    final textScale = MediaQuery.of(context).textScaleFactor;
+    final desiredH =
+    (275.0 * (textScale > 1.1 ? textScale : 1.0)); // target height
+
+    return tileW / desiredH;
   }
 
   // helpers
