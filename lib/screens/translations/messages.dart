@@ -29,6 +29,7 @@ class Messages extends Translations {
       // Start Page
       'welcome': 'Welcome',
       'welcome_to_restaurant': 'Welcome to our Restaurant',
+      'welcome_msg' : 'Discover dishes, leave honest reviews,\n help others find their next favorite meal.',
       'admin': 'Admin',
       'customer': 'Customer',
       'user': 'User',
@@ -131,6 +132,7 @@ class Messages extends Translations {
       // Start Page
       'welcome': 'مرحباً',
       'welcome_to_restaurant': 'مرحباً بك في المطعم',
+      'welcome_msg' : 'اكتشف الأطباق، اترك تقييمات صادقة،\n ساعد الآخرين في العثور على وجبتهم المفضلة التالية.',
       'admin': 'مسؤول',
       'customer': 'عميل',
       'user': 'مستخدم',

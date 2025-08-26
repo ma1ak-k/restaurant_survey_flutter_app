@@ -8,22 +8,12 @@ import 'dart:convert';
 import '../../models/menu_item.dart';
 import '../../services/database_service.dart';
 
+// ------------------ helpers (unchanged) ------------------
 String _normalizeText(String input) {
   final lower = input.toLowerCase();
-
-  // Remove punctuation & symbols
-  final noPunct = lower.replaceAll(
-    RegExp(r'[^\p{L}\p{N}\s]', unicode: true),
-    '',
-  );
-
-  // Remove Arabic diacritics (tashkeel)
-  final noDiacritics = noPunct.replaceAll(
-    RegExp(r'[\u064B-\u0652\u0670\u0640]', unicode: true),
-    '',
-  );
-
-  // Trim extra spaces
+  final noPunct = lower.replaceAll(RegExp(r'[^\p{L}\p{N}\s]', unicode: true), '');
+  final noDiacritics =
+  noPunct.replaceAll(RegExp(r'[\u064B-\u0652\u0670\u0640]', unicode: true), '');
   return noDiacritics.replaceAll(RegExp(r'\s+'), ' ').trim();
 }
 
@@ -46,6 +36,12 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
   List<String> _badWords = [];
   List<String> _goodWords = [];
 
+  // palette (same family as other pages)
+  static const _cream = Color(0xFFFFF7ED);
+  static const _terracotta = Color(0xFFCC6B49);
+  static const _plum = Color(0xFF5B3A3A);
+  static const _ink = Color(0xFF232222);
+
   @override
   void initState() {
     super.initState();
@@ -59,29 +55,18 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
   Future<void> _loadWordLists() async {
     String jsonString = await rootBundle.loadString('assets/words.json');
     Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-
-    _badWords = List<String>.from(
-      jsonMap['negative_words'],
-    ).map((w) => _normalizeText(w)).toList();
-
-    _goodWords = List<String>.from(
-      jsonMap['positive_words'],
-    ).map((w) => _normalizeText(w)).toList();
+    _badWords =
+        List<String>.from(jsonMap['negative_words']).map((w) => _normalizeText(w)).toList();
+    _goodWords =
+        List<String>.from(jsonMap['positive_words']).map((w) => _normalizeText(w)).toList();
   }
 
   bool _isReviewValid(String review, double rating) {
     final normalizedReview = _normalizeText(review);
-
-    bool containsBadWord = _badWords.any(
-          (word) => normalizedReview.contains(word),
-    );
-    bool containsGoodWord = _goodWords.any(
-          (word) => normalizedReview.contains(word),
-    );
-
+    bool containsBadWord = _badWords.any((word) => normalizedReview.contains(word));
+    bool containsGoodWord = _goodWords.any((word) => normalizedReview.contains(word));
     if (rating >= 4 && containsBadWord) return false;
     if (rating <= 2 && containsGoodWord) return false;
-
     return true;
   }
 
@@ -89,8 +74,8 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
-    for (var controller in _commentControllers.values) {
-      controller.dispose();
+    for (var c in _commentControllers.values) {
+      c.dispose();
     }
     super.dispose();
   }
@@ -100,14 +85,11 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
       _showError('please_enter_name_phone'.tr);
       return;
     }
-
-    // Validate phone number format (Egyptian format)
     final phoneRegex = RegExp(r'^(010|011|012|015)\d{8}$');
     if (!phoneRegex.hasMatch(_phoneController.text.trim())) {
       _showError('please_enter_phone'.tr);
       return;
     }
-
     for (var item in widget.selectedItems) {
       final rating = _ratings[item.menuItemId] ?? 0.0;
       if (rating == 0.0) {
@@ -116,21 +98,19 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
       }
       final comment = _commentControllers[item.menuItemId]!.text.trim();
       if (!_isReviewValid(comment, rating)) {
-        _showError(
-          "Rating and review for '${item.mealName}' do not match. Please fix it.",
-        );
+        _showError("Rating and review for '${item.mealName}' do not match. Please fix it.");
         return;
       }
     }
 
     try {
-      List<ReviewData> reviews = widget.selectedItems.map((item) {
-        return ReviewData(
-          menuItemId: item.menuItemId,
-          rating: _ratings[item.menuItemId]!,
-          comment: _commentControllers[item.menuItemId]!.text.trim(),
-        );
-      }).toList();
+      List<ReviewData> reviews = widget.selectedItems
+          .map((item) => ReviewData(
+        menuItemId: item.menuItemId,
+        rating: _ratings[item.menuItemId]!,
+        comment: _commentControllers[item.menuItemId]!.text.trim(),
+      ))
+          .toList();
 
       await DatabaseService.submitMultipleReviews(
         userName: _nameController.text.trim(),
@@ -145,29 +125,20 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
           builder: (context) {
             Future.delayed(const Duration(seconds: 5), () {
               if (mounted) {
-                Navigator.pop(context); // Close dialog
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/',
-                      (route) => false,
-                ); // Go home
+                Navigator.pop(context);
+                Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
               }
             });
             return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               title: Center(
-                child: Text(
-                  'thank_you'.tr,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                child: Text('thank_you'.tr, style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.favorite, color: Colors.red, size: 60),
-                  SizedBox(height: 16),
+                  const Icon(Icons.favorite, color: Colors.red, size: 60),
+                  const SizedBox(height: 16),
                   Text('reviews_submitted'.tr, textAlign: TextAlign.center),
                 ],
               ),
@@ -188,9 +159,20 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
     }
   }
 
+  // ------------------ UI: item card (restyled only) ------------------
   Widget _buildItemReviewCard(MenuItem item) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
+      color: isDark ? const Color(0xFF232021) : Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: isDark ? const Color(0x26FFFFFF) : const Color(0x14000000),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -199,7 +181,7 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
             Row(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10),
                   child: CachedNetworkImage(
                     imageUrl: item.imageUrl,
                     width: 60,
@@ -208,14 +190,14 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
                     placeholder: (context, url) => Container(
                       width: 60,
                       height: 60,
-                      color: Colors.grey[200],
-                      child: const Center(child: CircularProgressIndicator()),
+                      color: isDark ? const Color(0xFF2B2727) : Colors.grey[200],
+                      child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
                     ),
                     errorWidget: (context, url, error) => Container(
                       width: 60,
                       height: 60,
-                      color: Colors.grey[200],
-                      child: const Icon(Icons.fastfood),
+                      color: isDark ? const Color(0xFF2B2727) : Colors.grey[200],
+                      child: Icon(Icons.fastfood, color: isDark ? Colors.white54 : Colors.grey),
                     ),
                   ),
                 ),
@@ -226,25 +208,27 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
                     children: [
                       Text(
                         item.getLocalizedName(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
                           fontSize: 16,
+                          color: isDark ? Colors.white : _ink,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'egp ${item.price.toStringAsFixed(2)}'.tr,
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
+                        '${'egp'.tr} ${item.price.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          color: isDark ? const Color(0xFF8BE28E) : Colors.green,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         item.getLocalizedDescription(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey,
+                          color: isDark ? Colors.white60 : Colors.black54,
+                          height: 1.25,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -255,10 +239,7 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
               ],
             ),
             const SizedBox(height: 16),
-            Text(
-              '${'rate_dish'.tr}: *',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+            Text('${'rate_dish'.tr}: *', style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             RatingBar.builder(
               initialRating: _ratings[item.menuItemId] ?? 0.0,
@@ -280,8 +261,17 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
               maxLines: 2,
               decoration: InputDecoration(
                 labelText: 'add_comment'.tr,
+                labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+                filled: true,
+                fillColor: isDark ? const Color(0x1AFFFFFF) : const Color(0x0DCC6B49),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    color: isDark ? const Color(0x26FFFFFF) : const Color(0x33CC6B49),
+                  ),
                 ),
                 contentPadding: const EdgeInsets.all(12),
               ),
@@ -292,92 +282,185 @@ class _MultiReviewPageState extends State<MultiReviewPage> {
     );
   }
 
+  // ------------------ build ------------------
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      // Gradient AppBar (language switch kept)
       appBar: AppBar(
-        title: Text('review_selected_dishes'.tr),
-        actions: [LanguageSwitcher()],
-        backgroundColor: Colors.deepPurple,
+        title: Text(
+          'review_selected_dishes'.tr,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        actions: const [LanguageSwitcher()],
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isDark
+                  ? const [Color(0xFF2A1E1A), Color(0xFF3A2A25)]
+                  : const [Color(0xFFFFE4C7), Color(0xFFF8C9A8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black87),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card(
-              color: Colors.blue[50],
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'enter_details'.tr,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: "${'name'.tr} *",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.all(12),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _phoneController,
-                      decoration: InputDecoration(
-                        labelText: "${'phone'.tr} *",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.all(12),
-                      ),
-                      keyboardType: TextInputType.phone,
-                    ),
-                  ],
-                ),
+
+      body: Stack(
+        children: [
+          // background gradient + soft glows
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors:
+                isDark ? const [Color(0xFF161414), Color(0xFF1E1B1B)] : const [_cream, Color(0xFFFFEFE0)],
               ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              'rate_each_item'.tr,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            ...widget.selectedItems.map((item) => _buildItemReviewCard(item)),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _submitAllReviews,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+          ),
+          Positioned(
+            top: -50,
+            right: -40,
+            child: _blurCircle(isDark ? const Color(0x33FFFFFF) : const Color(0x33CC6B49), 150),
+          ),
+          Positioned(
+            bottom: -70,
+            left: -50,
+            child: _blurCircle(isDark ? const Color(0x334CAF50) : const Color(0x337A8F55), 190),
+          ),
+
+          // content (unchanged structure)
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // details card
+                Card(
+                  color: isDark ? const Color(0xFF232021) : Colors.white,
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(14),
+                    side: BorderSide(
+                      color: isDark ? const Color(0x26FFFFFF) : const Color(0x14000000),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('enter_details'.tr,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: isDark ? Colors.white : _ink,
+                            )),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: _nameController,
+                          decoration: _inputDecoration(
+                            context,
+                            label: "${'name'.tr} *",
+                            isDark: isDark,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          decoration: _inputDecoration(
+                            context,
+                            label: "${'phone'.tr} *",
+                            isDark: isDark,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                child: Text(
-                  'submit_reviews'.tr,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                const SizedBox(height: 20),
+
+                Text('rate_each_item'.tr,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? Colors.white : _ink,
+                    )),
+                const SizedBox(height: 10),
+
+                ...widget.selectedItems.map((item) => _buildItemReviewCard(item)),
+                const SizedBox(height: 20),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _submitAllReviews,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _terracotta,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      'submit_reviews'.tr,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---- small UI helpers (style only) ----
+  InputDecoration _inputDecoration(BuildContext context,
+      {required String label, required bool isDark}) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+      filled: true,
+      fillColor: isDark ? const Color(0x1AFFFFFF) : const Color(0x0DCC6B49),
+      contentPadding: const EdgeInsets.all(12),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(
+          color: isDark ? const Color(0x26FFFFFF) : const Color(0x33CC6B49),
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(
+          color: isDark ? Colors.white70 : _terracotta,
+          width: 1.2,
         ),
       ),
     );
   }
+
+  static Widget _blurCircle(Color color, double size) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      color: color,
+      shape: BoxShape.circle,
+      boxShadow: [BoxShadow(color: color, blurRadius: 60, spreadRadius: 10)],
+    ),
+  );
 }
